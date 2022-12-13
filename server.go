@@ -1,20 +1,27 @@
 package main
 
 import (
-	"net/http"
+	"golang-restful-gin/config"
+	"golang-restful-gin/controller"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
+)
+
+var (
+	db *gorm.DB = config.SetupDatabaseConnection()
+	authController controller.AuthController = controller.NewAuthController() 
 )
 
 func main() {
+	defer config.CloseDatabaseConnection(db)
 	r := gin.Default()
 
-	r.GET("/ping", func(ctx *gin.Context) {
-		ctx.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-			"status" : "ok",
-		})
-	})
+	authRoutes := r.Group("api/auth")
+	{
+		authRoutes.POST("/login", authController.Login)
+		authRoutes.POST("/register", authController.Register)
+	}
 
 	r.Run()
 }
