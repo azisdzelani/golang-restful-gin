@@ -15,13 +15,13 @@ var (
 
 func main() {
 	defer config.CloseDatabaseConnection(db)
-	r := gin.Default()
+	server := gin.Default()
 
-	authRoutes := r.Group("api/auth")
+	authRoutes := server.Group("api/auth")
 	{
 		authRoutes.POST("/login", authController.Login)
 		authRoutes.POST("/register", authController.Register)
 	}
 
-	r.Run()
+	server.Run()
 }
